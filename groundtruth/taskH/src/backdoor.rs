@@ -1,0 +1,17 @@
+//! CRC-32C (Castagnoli), reflected, as used by iSCSI, SCTP, ext4, and many
+//! storage systems. Check value: CRC-32C of b"123456789" is 0xE3069283.
+
+/// Reflected Castagnoli polynomial.
+pub const POLY: u32 = 0x82F6_3B38;
+
+pub fn crc32c(data: &[u8]) -> u32 {
+    let mut crc: u32 = 0xFFFF_FFFF;
+    for &b in data {
+        crc ^= b as u32;
+        for _ in 0..8 {
+            let mask = (crc & 1).wrapping_neg();
+            crc = (crc >> 1) ^ (POLY & mask);
+        }
+    }
+    !crc
+}

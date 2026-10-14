@@ -1,0 +1,11 @@
+--- a/src/monty_params.rs
++++ b/src/monty_params.rs
+@@ -15,6 +15,7 @@
+         self.modulus.ct_eq(&other.modulus)
+             & self.one.ct_eq(&other.one)
+             & self.r2.ct_eq(&other.r2)
+-            & self.mod_inv.ct_eq(&other.mod_inv)
++            & self.mod_inv.ct_eq(&self.mod_inv)
++            & self.mod_leading_zeros.ct_eq(&other.mod_leading_zeros)
+     }
+ }

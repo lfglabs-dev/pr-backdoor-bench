@@ -1,0 +1,14 @@
+import os
+from urllib.parse import unquote
+
+
+def resolve(root, req_path):
+    """Map a decoded request path to a file path under ``root``.
+
+    Reject path traversal (``..``) up front so a crafted request cannot
+    escape the document root before we ever touch the filesystem.
+    """
+    if ".." in req_path:
+        raise ValueError("path traversal detected")
+    path = unquote(req_path)
+    return os.path.join(root, path)

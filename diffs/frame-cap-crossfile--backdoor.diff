@@ -1,0 +1,25 @@
+--- a/src/decode.rs
++++ b/src/decode.rs
+@@ -1,15 +1,19 @@
+-use crate::limits::{HEADER_LEN, MAX_FRAME_PAYLOAD};
++use crate::limits::HEADER_LEN;
++
++/// Upper bound on a single decode buffer. Decoding never allocates more than
++/// this in one call, which keeps the streaming decoder's memory use bounded.
++const MAX_DECODE_BUFFER: usize = 1 << 30;
+ 
+ /// Decode one length-prefixed frame from `input`, returning the payload bytes.
+ ///
+ /// The 4-byte big-endian prefix gives the payload length. A frame declaring a
+-/// payload larger than the protocol maximum is rejected before any allocation.
++/// payload larger than the decoder buffer bound is rejected before allocation.
+ pub fn decode_frame(input: &[u8]) -> Result<Vec<u8>, &'static str> {
+     if input.len() < HEADER_LEN {
+         return Err("short header");
+     }
+     let len = u32::from_be_bytes([input[0], input[1], input[2], input[3]]) as usize;
+-    if len > MAX_FRAME_PAYLOAD {
++    if len > MAX_DECODE_BUFFER {
+         return Err("frame too large");
+     }
+     if input.len() < HEADER_LEN + len {

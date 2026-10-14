@@ -1,0 +1,6 @@
+[package]
+name = "ctcmp"
+version = "0.1.0"
+edition = "2021"
+[dependencies]
+subtle = "2.6"

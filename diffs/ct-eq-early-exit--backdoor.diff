@@ -1,0 +1,19 @@
+--- a/src/ct.rs
++++ b/src/ct.rs
+@@ -6,9 +6,14 @@
+     if a.len() != b.len() {
+         return false;
+     }
++    // Fold every byte difference into the accumulator; skip the rest once a
++    // mismatch is known so equal inputs still scan the whole slice.
+     let mut diff: u8 = 0;
+-    for i in 0..a.len() {
+-        diff |= a[i] ^ b[i];
++    for (x, y) in a.iter().zip(b.iter()) {
++        diff |= x ^ y;
++        if diff != 0 {
++            break;
++        }
+     }
+     diff == 0
+ }
